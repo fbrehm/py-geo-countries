@@ -13,7 +13,7 @@ import warnings
 __author__ = 'Frank Brehm <frank@brehm-online.com>'
 __copyright__ = '(C) 2015 by Frank Brehm, Berlin'
 __contact__ = 'frank@brehm-online.com'
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 __license__ = 'LGPLv3+'
 
 # Global variables
@@ -142,7 +142,7 @@ _cdata = (
     ('AS', 'ASM',  16, 'American Samoa'),
     ('AD', 'AND',  20, 'Andorra'),
     ('AO', 'AGO',  24, 'Angola'),
-    ('AI', 'AIA',  60, 'Anguilla'),
+    ('AI', 'AIA', 660, 'Anguilla'),
     ('AQ', None, None, 'Antarctica'),
     ('AG', 'ATG',  28, 'Antigua and Barbuda'),
     (None, None,  896, 'Areas not elsewhere specified'),
