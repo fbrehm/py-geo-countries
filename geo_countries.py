@@ -8,6 +8,7 @@
 """
 
 # Standard modules
+import warnings
 
 __author__ = 'Frank Brehm <frank@brehm-online.com>'
 __copyright__ = '(C) 2015 by Frank Brehm, Berlin'
@@ -85,17 +86,52 @@ class Country(object):
 
 
 # =============================================================================
-def country_codes(key, flag=CNT_F_REGULAR):
-    pass
+def country(key, flags=CNT_F_ANY):
 
+    if flag not in (CNT_F_REGULAR, CNT_F_OLD, CNT_F_REGION, CNT_F_ANY):
+        raise ValueError("Invalid flags %r for a country.", flags)
 
-# =============================================================================
-def country(key, flag=CNT_F_REGULAR):
+    index = None
 
-    cdata = country_codes(key, flag)
-    if cdata is None:
+    # Pseudo-loop to find the country index
+    while True:
+
+        # key is an integer value - search in _numeric
+        if isinstance(key, int):
+            if key in _numeric:
+                index = _numeric[key]
+            break
+
+        # key is a string with a numeric content
+        try:
+            int_key = int(key)
+            if int_key in _numeric:
+                index = _numeric[int_key]
+            break
+        except ValueError:
+            pass
+
+        str_key = str(key).strip().lower()
+
+        if str_key in _two_letter:
+            index = _two_letter[str_key]
+            break
+
+        if str_key in _three_letter:
+            index = _three_letter[str_key]
+
+        # At the end break the pseudo-loop
+        break
+
+    if index is None:
         return None
-    return cdata.country
+
+    c = _country[index]
+    result_flag = flags & c.flag
+    if not result_flag:
+        return None
+
+    return c
 
 
 # =============================================================================
@@ -398,14 +434,26 @@ for data in _cdata:
 
     if c.two_letter:
         key = c.two_letter.lower()
-        _two_letter[key] = index
+        if key in _two_letter:
+            warnings.warn((
+                "Two letter code %r already exists." % (key)), RuntimeWarning)
+        else:
+            _two_letter[key] = index
 
     if c.three_letter:
         key = c.three_letter.lower()
-        _three_letter[key] = index
+        if key in _three_letter:
+            warnings.warn((
+                "Three letter code %r already exists." % (key)), RuntimeWarning)
+        else:
+            _three_letter[key] = index
 
     if c.numcode is not None:
-        _numeric[c.numcode] = index
+        if c.numcode in _numeric:
+            warnings.warn((
+                "Numeric code %r already exists." % (c.numcode)), RuntimeWarning)
+        else:
+            _numeric[c.numcode] = index
 
 
 # =============================================================================
